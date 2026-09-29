@@ -186,6 +186,22 @@ const resistorSch: Record<string, [number, number]> = {
 const inputResistors = new Set(["R_FB_TOP", "R_FB_BOT", "R_CC1", "R_CC2"])
 const cpuResistors = new Set(["R_SV_TOP", "R_SV_BOT", "R_VRA2", "R_SZQ", "R_X32"])
 const cpuCapacitors = new Set(["C_3V3_BULK", "C_SD"])
+const sheetForSection: Record<string, string> = {
+  input: "Power",
+  pmic: "Power",
+  cpu: "V3s",
+  boot: "Boot and UART",
+  uart: "Boot and UART",
+  ethernet: "Ethernet",
+}
+const resistorSectionName = (name: string) =>
+  inputResistors.has(name) ? "input" : cpuResistors.has(name) ? "cpu" :
+  name.startsWith("R_SD") ? "boot" :
+  name.startsWith("R_TX") || name.startsWith("R_RX") || name.startsWith("R_LED") || name === "R_RTX" ? "ethernet" : "pmic"
+const capacitorSectionName = (name: string) =>
+  name === "C_IN" ? "input" : cpuCapacitors.has(name) ? "cpu" :
+  name.includes("ETH") ? "ethernet" :
+  name.includes("CORE") || name.includes("DRAM") || name.includes("IO") || name.includes("X") || name.includes("SV") || name.includes("VRA") || name.includes("RTC_VIO") ? "cpu" : "pmic"
 
 const pcbReverse = new Set([
   "R_RSB_SCL", "R_RSB_SDA", "R_SZQ", "C_3V3_BULK",
@@ -193,56 +209,60 @@ const pcbReverse = new Set([
 ])
 
 export default function MinimalV3sEthernet({ routingDisabled = false }: { routingDisabled?: boolean } = {}) {
-  // Keep manual schematic coordinates fixed when all circuits are nested in the sheet.
+  // Keep manual schematic coordinates fixed across sheets.
   return (
     <board width="80mm" height="70mm" layers={4} routingDisabled={routingDisabled} schLayout={{ layoutMode: "relative" }}>
       <copperpour connectsTo="net.GND" layer="inner1" clearance="0.15mm" boardEdgeMargin="0.25mm" />
-      <schematicsheet name="V3s SBC" displayName="Minimal V3s SBC" sheetIndex={0} sheetWidth="800mm" sheetHeight="600mm">
-      <schematicsection name="input" />
-      <schematicsection name="pmic" />
-      <schematicsection name="cpu" />
-      <schematicsection name="boot" />
-      <schematicsection name="uart" />
-      <schematicsection name="ethernet" />
+      <schematicsheet name="Power" displayName="Power input and PMIC" sheetIndex={0} sheetWidth="360mm" sheetHeight="520mm">
+        <schematicsection name="input" />
+        <schematicsection name="pmic" />
+        <schematictext text="USB-C input and 3.3 V regulator" schX={-35} schY={23} fontSize={0.4} anchor="left" />
+        <schematictext text="PMIC and sequenced rails" schX={-33} schY={-4} fontSize={0.4} anchor="left" />
+        <schematictext text="U2 - AXP203 power manager" schX={-29.5} schY={-7} fontSize={0.4} anchor="left" />
+        <schematictext text="5 V input; 1.2 V and 1.8 V rails" schX={-29.5} schY={-7.6} fontSize={0.3} anchor="left" />
+        <schematictext text="U3 - AP61100 buck regulator" schX={-29.5} schY={16.3} fontSize={0.4} anchor="left" />
+        <schematictext text="5 V input; 3.3 V output" schX={-29.5} schY={15.7} fontSize={0.3} anchor="left" />
+      </schematicsheet>
+      <schematicsheet name="V3s" displayName="V3s and clocks" sheetIndex={1} sheetWidth="400mm" sheetHeight="420mm">
+        <schematicsection name="cpu" />
+        <schematictext text="V3s, clocks and decoupling" schX={-11} schY={20.5} fontSize={0.4} anchor="left" />
+        <schematictext text="U1 - Allwinner V3s SoC" schX={-7} schY={6.8} fontSize={0.4} anchor="left" />
+        <schematictext text="1.2 V core, 1.8 V DRAM, 3.3 V I/O; 10/100 Ethernet" schX={-7} schY={6.2} fontSize={0.3} anchor="left" />
+        <schematictext text="Y2 - 32.768 kHz RTC crystal" schX={10.5} schY={18.1} fontSize={0.4} anchor="left" />
+      </schematicsheet>
+      <schematicsheet name="Ethernet" displayName="10/100 Ethernet" sheetIndex={2} sheetWidth="260mm" sheetHeight="300mm">
+        <schematicsection name="ethernet" />
+        <schematictext text="10/100 Ethernet with RJ45 magnetics" schX={20} schY={19} fontSize={0.4} anchor="left" />
+        <schematictext text="J2 - RJ45 with integrated magnetics" schX={25} schY={8.5} fontSize={0.4} anchor="left" />
+        <schematictext text="10/100BASE-T; 3.3 V LED supply" schX={25} schY={7.9} fontSize={0.3} anchor="left" />
+      </schematicsheet>
+      <schematicsheet name="Boot and UART" displayName="Boot and UART" sheetIndex={3} sheetWidth="400mm" sheetHeight="180mm">
+        <schematicsection name="boot" />
+        <schematicsection name="uart" />
+        <schematictext text="microSD boot" schX={-2} schY={-23.5} fontSize={0.4} anchor="left" />
+        <schematictext text="UART debug" schX={24} schY={-24.5} fontSize={0.4} anchor="left" />
+      </schematicsheet>
 
-      {/* Explicit headings keep section titles clear of the CC traces and one another. */}
-      <schematictext text="USB-C input and 3.3 V regulator" schX={-35} schY={23} fontSize={0.4} anchor="left" />
-      <schematictext text="PMIC and sequenced rails" schX={-33} schY={-4} fontSize={0.4} anchor="left" />
-      <schematictext text="V3s, clocks and decoupling" schX={-11} schY={20.5} fontSize={0.4} anchor="left" />
-      <schematictext text="microSD boot" schX={-2} schY={-23.5} fontSize={0.4} anchor="left" />
-      <schematictext text="UART debug" schX={24} schY={-24.5} fontSize={0.4} anchor="left" />
-      <schematictext text="10/100 Ethernet with RJ45 magnetics" schX={20} schY={19} fontSize={0.4} anchor="left" />
-
-      <schematictext text="U1 - Allwinner V3s SoC" schX={-7} schY={6.8} fontSize={0.4} anchor="left" />
-      <schematictext text="1.2 V core, 1.8 V DRAM, 3.3 V I/O; 10/100 Ethernet" schX={-7} schY={6.2} fontSize={0.3} anchor="left" />
-      <schematictext text="U2 - AXP203 power manager" schX={-29.5} schY={-7} fontSize={0.4} anchor="left" />
-      <schematictext text="5 V input; 1.2 V and 1.8 V rails" schX={-29.5} schY={-7.6} fontSize={0.3} anchor="left" />
-      <schematictext text="U3 - AP61100 buck regulator" schX={-29.5} schY={16.3} fontSize={0.4} anchor="left" />
-      <schematictext text="5 V input; 3.3 V output" schX={-29.5} schY={15.7} fontSize={0.3} anchor="left" />
-      <schematictext text="J2 - RJ45 with integrated magnetics" schX={25} schY={8.5} fontSize={0.4} anchor="left" />
-      <schematictext text="10/100BASE-T; 3.3 V LED supply" schX={25} schY={7.9} fontSize={0.3} anchor="left" />
-      <schematictext text="Y2 - 32.768 kHz RTC crystal" schX={10.5} schY={18.1} fontSize={0.4} anchor="left" />
-
-      <V3s name="U1" pcbX={0} pcbY={0} schX={0} schY={0} schSectionName="cpu" />
-      <AXP203 name="U2" pcbX={-22} pcbY={-13} schX={-24} schY={-12} schHeight={5} schSectionName="pmic" />
-      <AP61100Z6_7 name="U3" pcbX={-25} pcbY={13} schX={-26} schY={11} schSectionName="input" />
-      <TF_01A name="J1" pcbX={2} pcbY={-25} schX={0} schY={-27} schHeight={1.4} schSectionName="boot" />
-      <J0011D21BNL name="J2" pcbX={26} pcbY={21.8} schX={26} schY={4} schSectionName="ethernet" />
-      <TYPE_C_31_M_12 name="USB1" pcbX={-34} pcbY={21} pcbRotation={-90} schX={-33} schY={18} schSectionName="input" />
-      <pinheader name="J4" pinCount={4} pitch="2.54mm" gender="male" pcbX={27} pcbY={-29} schX={25} schY={-28} schSectionName="uart" />
-      <X322524MOB4SI name="Y1" loadCapacitance="12pF" pcbX={5.8} pcbY={11} pcbRotation={90} schX={9} schY={12} schSectionName="cpu" />
-      <Q13FC13500004 name="Y2" pcbX={17} pcbY={10} schX={15.3} schY={17.3} schRotation={180} schSectionName="cpu" />
-      <pushbutton name="SW_PWR" footprint="smdpushbutton" pcbX={-33} pcbY={-20} schX={-30} schY={-22} schSectionName="pmic" />
-      <inductor name="L_CORE" inductance="4.7uH" footprint="1210" pcbX={-28.5} pcbY={-13.6} pcbRotation={180} schX={-19} schY={-9} schSectionName="pmic" />
-      <inductor name="L_DRAM" inductance="4.7uH" footprint="1210" pcbX={-15} pcbY={-16} schX={-17} schY={-9} schSectionName="pmic" />
-      <inductor name="L_3V3" inductance="1uH" footprint="1210" pcbX={-21} pcbY={13} schX={-23} schY={11} schSectionName="input" />
-      <inductor name="L_ETH" inductance="10uH" footprint="0805" pcbX={13} pcbY={22} schX={24} schY={12} schSectionName="ethernet" />
+      <V3s name="U1" pcbX={0} pcbY={0} schX={0} schY={0} schSectionName="cpu" schSheetName="V3s" />
+      <AXP203 name="U2" pcbX={-22} pcbY={-13} schX={-24} schY={-12} schHeight={5} schSectionName="pmic" schSheetName="Power" />
+      <AP61100Z6_7 name="U3" pcbX={-25} pcbY={13} schX={-26} schY={11} schSectionName="input" schSheetName="Power" />
+      <TF_01A name="J1" pcbX={2} pcbY={-25} schX={0} schY={-27} schHeight={1.4} schSectionName="boot" schSheetName="Boot and UART" />
+      <J0011D21BNL name="J2" pcbX={26} pcbY={21.8} schX={26} schY={4} schSectionName="ethernet" schSheetName="Ethernet" />
+      <TYPE_C_31_M_12 name="USB1" pcbX={-34} pcbY={21} pcbRotation={-90} schX={-33} schY={18} schSectionName="input" schSheetName="Power" />
+      <pinheader name="J4" pinCount={4} pitch="2.54mm" gender="male" pcbX={27} pcbY={-29} schX={25} schY={-28} schSectionName="uart" schSheetName="Boot and UART" />
+      <X322524MOB4SI name="Y1" loadCapacitance="12pF" pcbX={5.8} pcbY={11} pcbRotation={90} schX={9} schY={12} schSectionName="cpu" schSheetName="V3s" />
+      <Q13FC13500004 name="Y2" pcbX={17} pcbY={10} schX={15.3} schY={17.3} schRotation={180} schSectionName="cpu" schSheetName="V3s" />
+      <pushbutton name="SW_PWR" footprint="smdpushbutton" pcbX={-33} pcbY={-20} schX={-30} schY={-22} schSectionName="pmic" schSheetName="Power" />
+      <inductor name="L_CORE" inductance="4.7uH" footprint="1210" pcbX={-28.5} pcbY={-13.6} pcbRotation={180} schX={-19} schY={-9} schSectionName="pmic" schSheetName="Power" />
+      <inductor name="L_DRAM" inductance="4.7uH" footprint="1210" pcbX={-15} pcbY={-16} schX={-17} schY={-9} schSectionName="pmic" schSheetName="Power" />
+      <inductor name="L_3V3" inductance="1uH" footprint="1210" pcbX={-21} pcbY={13} schX={-23} schY={11} schSectionName="input" schSheetName="Power" />
+      <inductor name="L_ETH" inductance="10uH" footprint="0805" pcbX={13} pcbY={22} schX={24} schY={12} schSectionName="ethernet" schSheetName="Ethernet" />
       {resistors.map(([name, resistance, x, y]) => (
-        <resistor key={name} name={name} resistance={resistance} footprint="0402" pcbX={resistorPcb[name]?.[0] ?? x} pcbY={resistorPcb[name]?.[1] ?? y} pcbRotation={pcbReverse.has(name) ? 180 : 0} schX={resistorSch[name]?.[0] ?? x} schY={resistorSch[name]?.[1] ?? y} schRotation={name.startsWith("R_TX") || name.startsWith("R_RX") || name === "R_X32" || name === "R_PWRON" ? 0 : -90} schSectionName={inputResistors.has(name) ? "input" : cpuResistors.has(name) ? "cpu" : name.startsWith("R_SD") ? "boot" : name.startsWith("R_TX") || name.startsWith("R_RX") || name.startsWith("R_LED") || name === "R_RTX" ? "ethernet" : "pmic"} />
+        <resistor key={name} name={name} resistance={resistance} footprint="0402" pcbX={resistorPcb[name]?.[0] ?? x} pcbY={resistorPcb[name]?.[1] ?? y} pcbRotation={pcbReverse.has(name) ? 180 : 0} schX={resistorSch[name]?.[0] ?? x} schY={resistorSch[name]?.[1] ?? y} schRotation={name.startsWith("R_TX") || name.startsWith("R_RX") || name === "R_X32" || name === "R_PWRON" ? 0 : -90} schSectionName={resistorSectionName(name)} schSheetName={sheetForSection[resistorSectionName(name)]} />
       ))}
       {capacitors.map(([name, capacitance, x, y, rail]) => (
         <React.Fragment key={name}>
-          <capacitor name={name} capacitance={capacitance} footprint={capacitance === "22uF" ? "1206" : capacitance === "10uF" || capacitance === "4.7uF" ? "0805" : "0402"} pcbX={capacitorPcb[name]?.[0] ?? x} pcbY={capacitorPcb[name]?.[1] ?? y} pcbRotation={pcbReverse.has(name) ? 180 : 0} schX={capacitorSch[name]?.[0] ?? x} schY={capacitorSch[name]?.[1] ?? y} schRotation={-90} schSectionName={name === "C_IN" ? "input" : cpuCapacitors.has(name) ? "cpu" : name.includes("ETH") ? "ethernet" : name.includes("CORE") || name.includes("DRAM") || name.includes("IO") || name.includes("X") || name.includes("SV") || name.includes("VRA") || name.includes("RTC_VIO") ? "cpu" : "pmic"} />
+          <capacitor name={name} capacitance={capacitance} footprint={capacitance === "22uF" ? "1206" : capacitance === "10uF" || capacitance === "4.7uF" ? "0805" : "0402"} pcbX={capacitorPcb[name]?.[0] ?? x} pcbY={capacitorPcb[name]?.[1] ?? y} pcbRotation={pcbReverse.has(name) ? 180 : 0} schX={capacitorSch[name]?.[0] ?? x} schY={capacitorSch[name]?.[1] ?? y} schRotation={-90} schSectionName={capacitorSectionName(name)} schSheetName={sheetForSection[capacitorSectionName(name)]} />
           <trace from={`${name}.pin1`} to={`net.${rail}`} />
           <trace from={`${name}.pin2`} to="net.GND" />
         </React.Fragment>
@@ -310,7 +330,6 @@ export default function MinimalV3sEthernet({ routingDisabled = false }: { routin
       <trace from="SW_PWR.pin1" to="net.GND" />
       <trace from="SW_PWR.pin3" to="net.GND" />
       <trace from="SW_PWR.pin4" to="net.PWRON_BUTTON" />
-      </schematicsheet>
     </board>
   )
 }
