@@ -193,9 +193,11 @@ const pcbReverse = new Set([
 ])
 
 export default function MinimalV3sEthernet({ routingDisabled = false }: { routingDisabled?: boolean } = {}) {
+  // Keep manual schematic coordinates fixed when all circuits are nested in the sheet.
   return (
-    <board width="80mm" height="70mm" layers={4} routingDisabled={routingDisabled}>
+    <board width="80mm" height="70mm" layers={4} routingDisabled={routingDisabled} schLayout={{ layoutMode: "relative" }}>
       <copperpour connectsTo="net.GND" layer="inner1" clearance="0.15mm" boardEdgeMargin="0.25mm" />
+      <schematicsheet name="V3s SBC" displayName="Minimal V3s SBC" sheetIndex={0} sheetWidth="800mm" sheetHeight="600mm">
       <schematicsection name="input" />
       <schematicsection name="pmic" />
       <schematicsection name="cpu" />
@@ -308,6 +310,7 @@ export default function MinimalV3sEthernet({ routingDisabled = false }: { routin
       <trace from="SW_PWR.pin1" to="net.GND" />
       <trace from="SW_PWR.pin3" to="net.GND" />
       <trace from="SW_PWR.pin4" to="net.PWRON_BUTTON" />
+      </schematicsheet>
     </board>
   )
 }
