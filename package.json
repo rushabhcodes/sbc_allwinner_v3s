@@ -1,0 +1,20 @@
+{
+  "name": "sbc_allwinner_v3s",
+  "module": "index.circuit.tsx",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "tsci build index.circuit.tsx --disable-parts-engine --autorouter-timeout 600s",
+    "check:netlist": "tsci check netlist index.circuit.tsx",
+    "check:placement": "tsci check placement index.circuit.tsx"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "tscircuit": "0.0.2646"
+  }
+}
