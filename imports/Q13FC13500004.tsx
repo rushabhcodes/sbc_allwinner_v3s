@@ -11,6 +11,7 @@ export const Q13FC13500004 = (props: ChipProps<typeof pinLabels>) => {
       pinLabels={pinLabels}
       symbol={
         <symbol>
+          <schematictext schX={0} schY={0.14} text="{NAME}" fontSize={0.12} anchor="center" color="#8D2323" />
           <schematicpath points={[{"x":-0.08,"y":0.14},{"x":-0.08,"y":-0.14}]} strokeColor="#8D2323" />
           <schematicrect schX={0} schY={0} width={0.08} height={0.28} strokeWidth={0.02} color="#880000" />
           <port name="pin1" pinNumber={1} aliases={["1"]} direction="left" schX={-0.4} schY={0} schStemLength={0.2} />

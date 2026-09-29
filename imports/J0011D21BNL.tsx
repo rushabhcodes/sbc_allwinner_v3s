@@ -28,6 +28,7 @@ export const J0011D21BNL = (props: ChipProps<typeof pinLabels>) => {
       pinAttributes={pinAttributes}
       symbol={
         <symbol>
+          <schematictext schX={-0.8} schY={1.5} text="{NAME}" fontSize={0.14} anchor="left" color="#8D2323" />
           <schematictext schX={-0.24} schY={-0.5} text="RJ45" fontSize={0.14} anchor="left" color="#8D2323" schRotation={0} />
           <port name="pin8" pinNumber={8} aliases={["CG"]} direction="left" schX={-1.4} schY={-1.4} schStemLength={0.4} />
           <port name="pin7" pinNumber={7} aliases={["NC"]} direction="left" schX={-1.4} schY={-1.2} schStemLength={0.4} />

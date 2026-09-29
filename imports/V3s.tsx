@@ -149,6 +149,7 @@ export const V3s = (props: ChipProps<typeof pinLabels>) => {
       pinAttributes={pinAttributes}
       symbol={
         <symbol>
+          <schematictext schX={-4.8} schY={4.5} text="{NAME}" fontSize={0.18} anchor="left" color="#8D2323" />
           <schematictext schX={-2.0292} schY={-1.508} text="LCD/CSI" fontSize={0.18} anchor="left" color="#0000FF" schRotation={-270} />
           <schematictext schX={-5} schY={4.2} text="PG/SDC1" fontSize={0.18} anchor="left" color="#0000FF" schRotation={0} />
           <schematictext schX={-1.60002} schY={-1.79998} text="UART/PWM/TWI" fontSize={0.18} anchor="left" color="#0000FF" schRotation={0} />
