@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "tsci build index.circuit.tsx --disable-parts-engine --autorouter-timeout 600s",
+    "build": "tsci build index.circuit.tsx --disable-parts-engine --autorouter-timeout 600s && bun scripts/compact-board.ts",
     "check:netlist": "tsci check netlist index.circuit.tsx",
     "check:placement": "tsci check placement index.circuit.tsx"
   },
@@ -17,5 +17,5 @@
   "dependencies": {
     "tscircuit": "0.0.2646"
   },
-  "version": "0.0.7"
+  "version": "0.0.9"
 }

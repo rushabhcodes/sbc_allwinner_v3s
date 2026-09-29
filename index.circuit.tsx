@@ -217,17 +217,21 @@ export default function MinimalV3sEthernet({ routingDisabled = false }: { routin
         <schematicsection name="input" />
         <schematicsection name="pmic" />
         <schematictext text="USB-C input and 3.3 V regulator" schX={-35} schY={23} fontSize={0.4} anchor="left" />
+        <schematictext text="USB1 is a 5 V sink; CC1 and CC2 each have a 5.1 kΩ pull-down." schX={-35} schY={22.2} fontSize={0.3} anchor="left" />
         <schematictext text="PMIC and sequenced rails" schX={-33} schY={-4} fontSize={0.4} anchor="left" />
         <schematictext text="U2 - AXP203 power manager" schX={-29.5} schY={-7} fontSize={0.4} anchor="left" />
-        <schematictext text="5 V input; 1.2 V and 1.8 V rails" schX={-29.5} schY={-7.6} fontSize={0.3} anchor="left" />
+        <schematictext text="5 V in; 1.2 V core, 1.8 V DRAM, 3.0 V analog and 3.3 V RTC rails." schX={-29.5} schY={-7.6} fontSize={0.3} anchor="left" />
         <schematictext text="U3 - AP61100 buck regulator" schX={-29.5} schY={16.3} fontSize={0.4} anchor="left" />
-        <schematictext text="5 V input; 3.3 V output" schX={-29.5} schY={15.7} fontSize={0.3} anchor="left" />
+        <schematictext text="5 V to 3.3 V for I/O, microSD and Ethernet LEDs." schX={-29.5} schY={15.7} fontSize={0.3} anchor="left" />
+        <schematictext text="SW_PWR pulls PWRON low through R_PWRON to start the PMIC." schX={-34} schY={-24.5} fontSize={0.3} anchor="left" />
       </schematicsheet>
       <schematicsheet name="V3s" displayName="V3s and clocks" sheetIndex={1} sheetWidth="400mm" sheetHeight="420mm">
         <schematicsection name="cpu" />
-        <schematictext text="V3s, clocks and decoupling" schX={-11} schY={20.5} fontSize={0.4} anchor="left" />
-        <schematictext text="U1 - Allwinner V3s SoC" schX={-7} schY={6.8} fontSize={0.4} anchor="left" />
-        <schematictext text="1.2 V core, 1.8 V DRAM, 3.3 V I/O; 10/100 Ethernet" schX={-7} schY={6.2} fontSize={0.3} anchor="left" />
+        <schematictext text="V3s, clocks and decoupling" schX={-11} schY={23.5} fontSize={0.4} anchor="left" />
+        <schematictext text="U1 - Allwinner V3s SoC" schX={-11} schY={22.8} fontSize={0.4} anchor="left" />
+        <schematictext text="1.2 V core, 1.8 V DRAM and 3.3 V I/O; integrated DDR2." schX={-11} schY={22.2} fontSize={0.3} anchor="left" />
+        <schematictext text="Boots from microSD; USB device/FEL and 10/100 Ethernet PHY." schX={-11} schY={21.7} fontSize={0.3} anchor="left" />
+        <schematictext text="Y1 provides the 24 MHz main clock with 12 pF load capacitance." schX={7} schY={9.8} fontSize={0.3} anchor="left" />
         <schematictext text="Y2 - 32.768 kHz RTC crystal" schX={10.5} schY={18.1} fontSize={0.4} anchor="left" />
       </schematicsheet>
       <schematicsheet name="Ethernet" displayName="10/100 Ethernet" sheetIndex={2} sheetWidth="260mm" sheetHeight="300mm">
@@ -235,12 +239,15 @@ export default function MinimalV3sEthernet({ routingDisabled = false }: { routin
         <schematictext text="10/100 Ethernet with RJ45 magnetics" schX={20} schY={19} fontSize={0.4} anchor="left" />
         <schematictext text="J2 - RJ45 with integrated magnetics" schX={25} schY={8.5} fontSize={0.4} anchor="left" />
         <schematictext text="10/100BASE-T; 3.3 V LED supply" schX={25} schY={7.9} fontSize={0.3} anchor="left" />
+        <schematictext text="51 Ω EPHY series resistors; 6.04 kΩ RTX bias; filtered 3.3 V center taps." schX={18} schY={-3.2} fontSize={0.3} anchor="left" />
       </schematicsheet>
       <schematicsheet name="Boot and UART" displayName="Boot and UART" sheetIndex={3} sheetWidth="400mm" sheetHeight="180mm">
         <schematicsection name="boot" />
         <schematicsection name="uart" />
         <schematictext text="microSD boot" schX={-2} schY={-23.5} fontSize={0.4} anchor="left" />
+        <schematictext text="J1 boots SDC0 in 4-bit mode; CMD and data have 47 kΩ pull-ups." schX={-2} schY={-24.2} fontSize={0.3} anchor="left" />
         <schematictext text="UART debug" schX={24} schY={-24.5} fontSize={0.4} anchor="left" />
+        <schematictext text="J4 exposes 3.3 V UART0 TX/RX and ground." schX={24} schY={-25.2} fontSize={0.3} anchor="left" />
       </schematicsheet>
 
       <V3s name="U1" pcbX={0} pcbY={0} schX={0} schY={0} schSectionName="cpu" schSheetName="V3s" />
