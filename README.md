@@ -30,6 +30,8 @@ The default build routes the four-layer 80 × 70 mm board. The completed build c
 
 PCB snapshots from the passing build: [full board](./pcb-routed.png), [Ethernet to RJ45](./pcb-ethernet.png), and [clock, power, SD, and USB nets](./pcb-critical-nets.png). Rebuild with `bun run build`; the autorouter can take several minutes. Run `bunx tsci check shorts dist/index/circuit.json` after any routing change.
 
+The [schematic review snapshot](./schematic-review.png) labels the V3s, both power chips, the RJ45, and the RTC crystal with their functions and relevant voltage or frequency values.
+
 This is a routed prototype, not a released fabrication package. The part-selection engine reports 0402 supplier footprint discrepancies and cannot resolve the selected 22 pF capacitor's JLCPCB number, so verify or replace those parts before assembly. Also verify the ordered AXP203 variant's startup voltages and timing, USB-C connector orientation and power budget, and Ethernet center-tap/EMC network.
 
 ## Imported parts

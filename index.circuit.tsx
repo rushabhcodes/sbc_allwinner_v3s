@@ -197,6 +197,16 @@ export default function MinimalV3sEthernet({ routingDisabled = false }: { routin
       <schematicsection name="boot" displayName="microSD boot and UART" />
       <schematicsection name="ethernet" displayName="10/100 Ethernet with RJ45 magnetics" />
 
+      <schematictext text="U1 - Allwinner V3s SoC" schX={-7} schY={6.8} fontSize={0.4} anchor="left" />
+      <schematictext text="1.2 V core, 1.8 V DRAM, 3.3 V I/O; 10/100 Ethernet" schX={-7} schY={6.2} fontSize={0.3} anchor="left" />
+      <schematictext text="U2 - AXP203 power manager" schX={-29.5} schY={-7} fontSize={0.4} anchor="left" />
+      <schematictext text="5 V input; 1.2 V and 1.8 V rails" schX={-29.5} schY={-7.6} fontSize={0.3} anchor="left" />
+      <schematictext text="U3 - AP61100 buck regulator" schX={-29.5} schY={16.3} fontSize={0.4} anchor="left" />
+      <schematictext text="5 V input; 3.3 V output" schX={-29.5} schY={15.7} fontSize={0.3} anchor="left" />
+      <schematictext text="J2 - RJ45 with integrated magnetics" schX={25} schY={8.5} fontSize={0.4} anchor="left" />
+      <schematictext text="10/100BASE-T; 3.3 V LED supply" schX={25} schY={7.9} fontSize={0.3} anchor="left" />
+      <schematictext text="Y2 - 32.768 kHz RTC crystal" schX={18.5} schY={19.3} fontSize={0.4} anchor="left" />
+
       <V3s name="U1" pcbX={0} pcbY={0} schX={0} schY={0} schSectionName="cpu" />
       <AXP203 name="U2" pcbX={-22} pcbY={-13} schX={-24} schY={-12} schHeight={5} schSectionName="power" />
       <AP61100Z6_7 name="U3" pcbX={-25} pcbY={13} schX={-26} schY={11} schSectionName="power" />
