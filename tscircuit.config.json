@@ -1,0 +1,3 @@
+{
+  "prebuildCommand": "mkdir -p dist/index && cp preview-3d.png dist/index/3d.png"
+}
